@@ -1,0 +1,100 @@
+#format: sh
+#
+#  straingenemodelload.config
+#
+#  This file sets up environment variables that are needed for a specific
+#  data provider input file to be handled by the annotation loader.
+#
+###########################################################################
+
+###########################################################################
+#
+#  GENERAL SETTINGS
+#
+###########################################################################
+
+#
+#  If the MGICONFIG environment variable does not have a local override,
+#  use the default "live" settings.
+#
+if [ "${MGICONFIG}" = "" ]
+then
+    MGICONFIG=/usr/local/mgi/live/mgiconfig
+    export MGICONFIG
+fi
+
+. ${MGICONFIG}/master.config.sh
+
+###########################################################################
+#
+#  LOAD SPECIFIC SETTINGS
+#
+###########################################################################
+
+#  Path name of the archive, logs, reports and output directories
+FILEDIR=${DATALOADSOUTPUT}/mgi/straingenemodelload
+ARCHIVEDIR=${FILEDIR}/archive
+LOGDIR=${FILEDIR}/logs
+RPTDIR=${FILEDIR}/reports
+OUTPUTDIR=${FILEDIR}/output
+INPUTDIR=${FILEDIR}/input
+
+export FILEDIR ARCHIVEDIR LOGDIR RPTDIR OUTPUTDIR INPUTDIR
+
+# input/output
+# strainmarkerload creates these files for downstream processing
+GM_INPUT_FILE=${OUTPUTDIR}/gminputfile.txt
+GM_ASSOC_FILE=${OUTPUTDIR}/gmassocfile.txt
+
+export GM_INPUT_FILE GM_ASSOC_FILE
+
+SM_BCP_FILE=MRK_StrainMarker.bcp
+ACC_BCP_FILE=ACC_Accession.bcp
+ACC_REF_BCP_FILE=ACC_AccessionReference.bcp
+
+export SM_BCP_FILE ACC_BCP_FILE ACC_REF_BCP_FILE
+
+#  Complete path name of the log files
+LOG_FILE=${LOGDIR}/straingenemodelload.log
+LOG_PROC=${LOGDIR}/straingenemodelload.proc.log
+LOG_DIAG=${LOGDIR}/straingenemodelload.diag.log
+LOG_CUR=${LOGDIR}/straingenemodelload.cur.log
+LOG_VAL=${LOGDIR}/straingenemodelload.val.log
+
+export LOG_FILE LOG_PROC LOG_DIAG LOG_CUR LOG_VAL
+
+ASSOCLOAD_WRAPPER=${ASSEMBLYSEQLOAD}/bin/run_assocload.sh
+ASSEMBLY_WRAPPER=${ASSEMBLYSEQLOAD}/bin/assemblyseqload.sh
+
+export ASSOCLOAD_WRAPPER ASSEMBLY_WRAPPER
+
+# if true, delete and bcp will not be done
+QC_ONLY=false
+#QC_ONLY=true
+
+# if true, reload B6 strain genemodels only
+B6_ONLY=false
+
+export QC_ONLY B6_ONLY
+
+#  The name of the job stream for the load
+JOBSTREAM=straingenemodelload
+
+export JOBSTREAM
+
+###########################################################################
+#
+#  MISCELLANEOUS SETTINGS
+#
+###########################################################################
+
+#  The name of the load for the subject of an email notification
+MAIL_LOADNAME="Strain Gene Model Load"
+
+#  Recipient list for mailing the log files (comma-separated)
+MAIL_LOG_PROC="mgiadmin"
+
+export MAIL_LOADNAME MAIL_LOG_PROC
+
+INSTALLDIR=${STRAINGENEMODELLOAD}
+export INSTALLDIR
