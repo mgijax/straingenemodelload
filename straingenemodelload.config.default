@@ -31,6 +31,7 @@ fi
 #
 ###########################################################################
 
+
 #  Path name of the archive, logs, reports and output directories
 FILEDIR=${DATALOADSOUTPUT}/mgi/straingenemodelload
 ARCHIVEDIR=${FILEDIR}/archive
@@ -41,18 +42,15 @@ INPUTDIR=${FILEDIR}/input
 
 export FILEDIR ARCHIVEDIR LOGDIR RPTDIR OUTPUTDIR INPUTDIR
 
-# input/output
 # strainmarkerload creates these files for downstream processing
-GM_INPUT_FILE=${OUTPUTDIR}/gminputfile.txt
-GM_ASSOC_FILE=${OUTPUTDIR}/gmassocfile.txt
+# we look for a lastrun file in GM_INPUT_DIR and only run the load if
+# lastrun is older than GM_ASSOC_FILE 
+# 
+GM_INPUTDIR=${DATALOADSOUTPUT}/mgi/strainmarkerload/output
+GM_INPUTFILE=${GM_INPUT_DIR}/gminputfile.txt
+GM_ASSOCFILE=${GM_INPUT_DIR}/gmassocfile.txt
 
-export GM_INPUT_FILE GM_ASSOC_FILE
-
-SM_BCP_FILE=MRK_StrainMarker.bcp
-ACC_BCP_FILE=ACC_Accession.bcp
-ACC_REF_BCP_FILE=ACC_AccessionReference.bcp
-
-export SM_BCP_FILE ACC_BCP_FILE ACC_REF_BCP_FILE
+export GM_INPUTDIR GM_INPUTFILE GM_ASSOCFILE
 
 #  Complete path name of the log files
 LOG_FILE=${LOGDIR}/straingenemodelload.log
@@ -65,8 +63,9 @@ export LOG_FILE LOG_PROC LOG_DIAG LOG_CUR LOG_VAL
 
 ASSOCLOAD_WRAPPER=${ASSEMBLYSEQLOAD}/bin/run_assocload.sh
 ASSEMBLY_WRAPPER=${ASSEMBLYSEQLOAD}/bin/assemblyseqload.sh
+ASSEMBLY_CONFIG=mgp_assemblyseqload.config
 
-export ASSOCLOAD_WRAPPER ASSEMBLY_WRAPPER
+export ASSOCLOAD_WRAPPER ASSEMBLY_WRAPPER ASSEMBLY_CONFIG
 
 # if true, delete and bcp will not be done
 QC_ONLY=false
