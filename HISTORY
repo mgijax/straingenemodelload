@@ -1,0 +1,6 @@
+TAG: straingenemodelload-6-0-13-1
+DATE: 05/01/2018
+STAFF: sc
+CHANGES: TR12734 GF project
+1) load MGP and B6 Strain Gene Models, load SEQ_GeneModels
+   still to do - load MCV annotations to MRK_StrainMarker objects 

@@ -1,0 +1,32 @@
+#format: sh
+#
+#  b6_seqgenemodel.config
+#
+#  This file sets up environment variables that are needed for  
+#  loading the MGP SEQ_GeneModel table
+#
+###########################################################################
+
+#
+# seqgenemodel load settings
+#
+
+# MGP Logical DB name 
+SGM_LOGICALDB='MGI Strain Gene'
+
+export SGM_LOGICALDB
+
+# full path to input file
+#
+SGM_BIOTYPEFILE=${SGM_INPUTDIR}/gm_b6biotypefile.txt
+
+# full path to bcp file
+#
+SGM_BCPFILE=${OUTPUTDIR}/SEQ_GeneModel.b6.bcp
+
+# full path to the log file
+#
+SGM_LOGFILE=${LOGDIR}/b6_seqgenemodelload.log
+
+
+export SGM_LOGICALDB SGM_BIOTYPEFILE SGM_BCPFILE SGM_LOGFILE 

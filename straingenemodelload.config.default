@@ -48,9 +48,8 @@ export FILEDIR ARCHIVEDIR LOGDIR RPTDIR OUTPUTDIR INPUTDIR
 # 
 SGM_INPUTDIR=${DATALOADSOUTPUT}/mgi/strainmarkerload/output
 SGM_INPUTFILE=${SGM_INPUTDIR}/gminputfile.txt
-SGM_BIOTYPEFILE=${SGM_INPUTDIR}/gmbiotypefile.txt
 
-export SGM_INPUTDIR SGM_INPUTFILE SGM_BIOTYPEFILE
+export SGM_INPUTDIR SGM_INPUTFILE 
 
 #  Complete path name of the log files
 LOG_FILE=${LOGDIR}/straingenemodelload.log
@@ -62,15 +61,15 @@ LOG_VAL=${LOGDIR}/straingenemodelload.val.log
 export LOG_FILE LOG_PROC LOG_DIAG LOG_CUR LOG_VAL
 
 ASSEMBLY_WRAPPER=${ASSEMBLYSEQLOAD}/bin/assemblyseqload.sh
-ASSEMBLY_CONFIG=mgp_assemblyseqload.config
+MGP_ASSEMBLY_CONFIG=mgp_assemblyseqload.config
+B6_ASSEMBLY_CONFIG=b6_assemblyseqload.config
 
-export ASSEMBLY_WRAPPER ASSEMBLY_CONFIG
+export ASSEMBLY_WRAPPER MGP_ASSEMBLY_CONFIG B6_ASSEMBLY_CONFIG
 
-# if true, delete and bcp will not be done
-QC_ONLY=false
-#QC_ONLY=true
+B6_ONLY=false
+#B6_ONLY=true
 
-export QC_ONLY
+export B6_ONLY
 
 #
 # seqgenemodel load settings

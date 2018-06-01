@@ -1,0 +1,29 @@
+#format: sh
+#
+#  mgp_seqgenemodel.config
+#
+#  This file sets up environment variables that are needed for  
+#  loading the MGP SEQ_GeneModel table
+#
+###########################################################################
+
+#
+# seqgenemodel load settings
+#
+
+# MGP Logical DB name 
+SGM_LOGICALDB='Mouse Genome Project'
+
+# full path to input file
+#
+SGM_BIOTYPEFILE=${SGM_INPUTDIR}/gm_mgpbiotypefile.txt
+
+# full path to bcp file
+#
+SGM_BCPFILE=${OUTPUTDIR}/SEQ_GeneModel.mgp.bcp
+
+# full path to the log file
+#
+SGM_LOGFILE=${LOGDIR}/mgp_seqgenemodelload.log
+
+export SGM_LOGICALDB SGM_BIOTYPEFILE SGM_BCPFILE SGM_LOGFILE

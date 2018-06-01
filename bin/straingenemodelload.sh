@@ -93,9 +93,9 @@ message=''
 # If the MGP gene models are to be reloaded, the following is done
 # 1) call the assemblyseqload to reload genemodels and coordinates 
 # 2) call the seqgenemodelload to reload SEQ_GeneModel
-#
+# 
 
-echo "Load Strain Marker objects for MGP and B6" | tee -a ${LOG}
+echo "Load Strain Marker objects for B6 and/or MGP. To load only B6 must update strainmarkerload B6_ONLY='true and straingenemodelload B6_ONLY='true'" | tee -a ${LOG}
 ${STRAINMARKERLOAD}/bin/strainmarkerload.sh  >> ${LOG} 2>&1
 STAT=$?
 if [ ${STAT} -ne 0 ]
@@ -108,8 +108,24 @@ else
     echo ${message} | tee -a ${LOG}
 fi
 
-echo "Load gene models for MGP" | tee -a ${LOG}
-${ASSEMBLY_WRAPPER} ${ASSEMBLY_CONFIG} >> ${LOG} 2>&1
+if [ "${B6_ONLY}" = "false" ]
+then
+    echo "Load gene models for MGP" | tee -a ${LOG}
+    ${ASSEMBLY_WRAPPER} ${MGP_ASSEMBLY_CONFIG} >> ${LOG} 2>&1
+    STAT=$?
+    if [ ${STAT} -ne 0 ]
+    then
+	message="${message} assemblyseqload.sh failed"
+	echo ${message} | tee -a ${LOG}
+	exit 1
+    else
+	message="${message} assemblyseqload.sh successful"
+	echo ${message} | tee -a ${LOG}
+    fi
+fi
+
+echo "Load gene models for B6" | tee -a ${LOG}
+${ASSEMBLY_WRAPPER} ${B6_ASSEMBLY_CONFIG} >> ${LOG} 2>&1
 STAT=$?
 if [ ${STAT} -ne 0 ]
 then
@@ -121,18 +137,34 @@ else
     echo ${message} | tee -a ${LOG}
 fi
 
+if [ "${B6_ONLY}" = "false" ]
+then
+    echo "Load SEQ_GeneModel for MGP" | tee -a ${LOG}
+    echo "${STRAINGENEMODELLOAD}/bin/seqgenemodelload.sh MGP >> ${LOG} 2>&1"
+    ${STRAINGENEMODELLOAD}/bin/seqgenemodelload.sh ${STRAINGENEMODELLOAD}/mgp_seqgenemodel.config >> ${LOG} 2>&1
+    STAT=$?
+    if [ ${STAT} -ne 0 ]
+    then
+	message="${message} seqgenemodelload.sh MGP failed"
+	echo ${message} | tee -a ${LOG}
+	exit 1
+    else
+	message="${message} seqgenemodelload.sh MGP successful" 
+	echo ${message} | tee -a ${LOG}
+    fi
+fi
 
-echo "Load SEQ_GeneModel for MGP" | tee -a ${LOG}
-echo "${STRAINGENEMODELLOAD}/bin/seqgenemodelload.sh >> ${LOG} 2>&1"
-${STRAINGENEMODELLOAD}/bin/seqgenemodelload.sh >> ${LOG} 2>&1
+echo "Load SEQ_GeneModel for B6" | tee -a ${LOG}
+echo "${STRAINGENEMODELLOAD}/bin/seqgenemodelload.sh B6 >> ${LOG} 2>&1"
+${STRAINGENEMODELLOAD}/bin/seqgenemodelload.sh ${STRAINGENEMODELLOAD}/b6_seqgenemodel.config >> ${LOG} 2>&1
 STAT=$?
 if [ ${STAT} -ne 0 ]
 then
-    message="${message} seqgenemodelload.sh failed"
+    message="${message} seqgenemodelload.sh B6 failed"
     echo ${message} | tee -a ${LOG}
     exit 1
 else
-    message="${message} seqgenemodelload.sh successful" 
+    message="${message} seqgenemodelload.sh B6 successful"
     echo ${message} | tee -a ${LOG}
 fi
 

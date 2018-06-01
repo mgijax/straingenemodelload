@@ -17,7 +17,7 @@
 #      	SGM_BIOTYPEFILE
 #	SGM_LOGFILE
 #	SGM_BCPFILE
-#	MGP_LOGICALDB
+#	SGM_LOGICALDB
 #	MGD_DBPASSWORDFILE
 #	MGD_DBNAME
 #	MGD_DBSERVER
@@ -54,6 +54,8 @@
 #  Date        SE   Change Description
 #  ----------  ---  -------------------------------------------------------
 #
+#  05/30/2018  sc   TR12734 genfevah project
+#
 #  04/27/2018  sc   Initial development
 #
 ###########################################################################
@@ -61,6 +63,9 @@
 cd `dirname $0`
 
 CONFIG=straingenemodelload.config
+
+# provider specific config file
+CONFIG_SGM=$1
 
 #
 # Make sure the common configuration file exists and source it.
@@ -72,6 +77,18 @@ else
     echo "Missing configuration file: ${CONFIG}"
     exit 1
 fi
+
+if [ -f ${CONFIG_SGM} ]
+then
+    . ${CONFIG_SGM}
+else
+    echo "Missing configuration file: ${CONFIG_SGM}"
+    exit 1
+fi
+echo "SGM_LOGICALDB ${SGM_LOGICALDB}"
+echo "SGM_BIOTYPEFILE ${SGM_BIOTYPEFILE}"
+echo "SGM_BCPFILE ${SGM_BCPFILE}"
+echo "SGM_LOGFILE ${SGM_LOGFILE}"
 
 #
 # Initialize the log file.
@@ -120,7 +137,7 @@ fi
 #
 echo "" >> ${LOG}
 date >> ${LOG}
-echo "Deleting the existing MGP records" | tee -a ${LOG}
+echo "Deleting the existing provider records" | tee -a ${LOG}
 cat - <<EOSQL | psql -h${MGD_DBSERVER} -d${MGD_DBNAME} -U${MGD_DBUSER} -e  >> ${LOG}
 
 select _Object_key as _Sequence_key
@@ -130,7 +147,7 @@ join acc_logicaldb ldb on
 	ldb._logicaldb_key = a._logicaldb_key
 where _MGIType_key = 19
 and preferred = 1
-and ldb.name = '${MGP_LOGICALDB}'
+and ldb.name = '${SGM_LOGICALDB}'
 ;
 
 delete from SEQ_GeneModel
@@ -141,11 +158,11 @@ where SEQ_GeneModel._Sequence_key = t._Sequence_key
 EOSQL
 
 #
-# Load MGP SEQ_GeneModel 
+# Load SEQ_GeneModel 
 #
 echo "" >> ${LOG}
 date >> ${LOG}
-echo "Adding MGP records" | tee -a ${LOG}
+echo "Adding SEQ_GeneModel records" | tee -a ${LOG}
 
 ${PG_DBUTILS}/bin/bcpin.csh ${MGD_DBSERVER} ${MGD_DBNAME} SEQ_GeneModel "" ${SGM_BCPFILE} "\t" "\n" mgd >> ${LOG}
 

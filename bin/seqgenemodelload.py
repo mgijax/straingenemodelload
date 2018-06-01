@@ -8,12 +8,15 @@
 Usage='seqgenemodelload.py'
 #
 # Env Vars:
-#        1. SGM_BCP_FILE_PATH
-#	 2. MGP_LOGICALDB
+#        . SGM_BCP_FILE
+#	 . SGM_LOGICALDB
+#	 . SGM_BIOTYPE_FILE
 # Inputs: 
-#	1. mgd database to resolve mgpId to sequence key and
+#	1. mgd database to resolve GM ID to sequence key and
 #	      translate raw biotype to _MarkerType_key 
-#       2. MGP file, from stdin, mapping mgpId to raw biotype
+#       2. Input file, from stdin, mapping GM ID to biotype
+#	    MGP=raw biotype
+#	    MGI B6=feature type
 #
 # Outputs:
 #	 1. SEQ_GeneModel bcp file, tab-delimited
@@ -77,6 +80,9 @@ bcpFilePath = os.environ['SGM_BCPFILE']
 # input file path
 inputFilePath = os.environ['SGM_BIOTYPEFILE']
 
+# Logical DB for this load
+ldbName =  os.environ['SGM_LOGICALDB']
+
 # file descriptors
 inFile = ''
 bcpFile = ''
@@ -87,20 +93,39 @@ cdate = mgi_utils.date('%m/%d/%Y')      # current date
 #
 # lookups
 #
-# loaded from provider input file - maps gene model ID to raw biotype
-rawBioTypeByGMIDLookup = {}     # {mgpId:rawBioType, ...}
+# loaded from provider input file - maps gene model ID to biotype
+rawBioTypeByGMIDLookup = {}     # {GM Id:BioType, ...}
 
-# loaded from db translation query - maps raw biotype to _MarkerType_key
+# loaded from db translation query - maps MGP raw biotype to _MarkerType_key
 markerTypeKeyByRawBioTypeLookup = {} # {rawBioType:_MarkerType_key}
 
-# loaded from db by provider - maps a mgpId to its _Sequence_key
-seqKeyByGMIDLookup = {} # {mgpId:_Sequence_key, ...}
+# loaded from mcv vocabulary
+featureTypeLookup = []
 
-# Provider we are loading 'ncbi', 'ensembl', or 'vega'
-provider = ''
+# loaded from db by provider - maps a  GM Id to its _Sequence_key
+seqKeyByGMIDLookup = {} # {GM Id:_Sequence_key, ...}
+
+# Provider we are loading MGP or MGI B6 Strain Gene Model
+provider =  ldbName
 
 # Purpose:  Load biotype translation Lookup; Lookup raw biotype
 #           to get MGI Marker Type Key
+# Returns: nothing
+# Assumes: there is a connection to the database
+# Effects: nothing
+# Throws: nothing
+
+def loadFeatureTypeLookup():
+    global featureTypeLookup
+    results = db.sql('''select term 
+	from VOC_Term
+	where _Vocab_key = 79''', 'auto')
+    for r in results:
+	featureTypeLookup.append(r['term'])
+
+    return 0
+
+# Purpose:  Load feature type lookup for MGI B6
 # Returns: nothing
 # Assumes: there is a connection to the database
 # Effects: nothing 
@@ -128,7 +153,6 @@ def loadMarkerTypeKeyLookup():
 def loadSequenceKeyLookup():
     global seqKeyByGMIDLookup
 
-    ldbName =  os.environ['MGP_LOGICALDB']
     results = db.sql('''SELECT _LogicalDB_key
 		FROM ACC_LogicalDB
 		WHERE name = '%s' ''' % ldbName, 'auto')
@@ -146,14 +170,13 @@ def loadSequenceKeyLookup():
 
     return 0
 
-# Purpose:  Load lookup of raw biotype by gene model ID for
-#	    MGP
+# Purpose:  Load lookup of biotypes by gene model ID 
 # Returns: nothing
 # Assumes: inFile is a valid file descriptor
 # Effects: nothing
 # Throws: nothing
 
-def loadMGPRawBioTypeByGMIDLookup():
+def loadBioTypeByGMIDLookup():
     global rawBioTypeByGMIDLookup
 
     for line in inFile.readlines():
@@ -187,14 +210,17 @@ def init():
         'Could not open file for writing %s\n' % bcpFilePath
         sys.exit(1)
 
-    print 'loading MGP Raw Biotype By GMID Lookup'
-    loadMGPRawBioTypeByGMIDLookup()
+    print 'loading Biotype By GMID Lookup'
+    loadBioTypeByGMIDLookup()
 
     print 'loading Sequence Key Lookup'
     loadSequenceKeyLookup()
 
     print 'loading Marker Type Key Lookup'
     loadMarkerTypeKeyLookup()
+
+    print 'loading Feature Type Lookup'
+    loadFeatureTypeLookup()
 
     return 0
 
@@ -213,30 +239,35 @@ def run ():
     # will not translate
     noTranslationCtr = 0
 
-    for mgpId in seqKeyByGMIDLookup:
-	sequenceKey = seqKeyByGMIDLookup[mgpId]
-
-	if mgpId in rawBioTypeByGMIDLookup:
-	    rawBioType = rawBioTypeByGMIDLookup[mgpId]
+    for id in seqKeyByGMIDLookup:
+	rawBiotype = ''
+	sequenceKey = seqKeyByGMIDLookup[id]
+	if id in rawBioTypeByGMIDLookup:
+	    rawBiotype = rawBioTypeByGMIDLookup[id]
 	else:
-	    print '%s is not in the input file' % mgpId
+	    print '%s is not in the input file' % id
 	    notInInputCtr = notInInputCtr + 1
 	    continue
 
-	if rawBioType in markerTypeKeyByRawBioTypeLookup:
-	    markerTypeKey = markerTypeKeyByRawBioTypeLookup[rawBioType]
-	else:
-	    print 'MGP GM ID %s raw biotype "%s" has no translation in the database' \
-		% (mgpId, rawBioType)
-	    noTranslationCtr = noTranslationCtr + 1
-	    continue
+	if provider == 'Mouse Genome Project':
+	    if rawBiotype not in markerTypeKeyByRawBioTypeLookup:
+		print 'MGP GM ID %s raw biotype "%s" has no translation in the database' \
+		    % (id, rawBiotype)
+		noTranslationCtr = noTranslationCtr + 1
+		continue
+	elif provider == 'MGI Strain Gene':
+	    if rawBiotype not in featureTypeLookup:
+		print 'MGI GM ID %s raw biotype "%s" is not a valid feature type the database' \
+                    % (id, rawBiotype)
+                noTranslationCtr = noTranslationCtr + 1
+                continue
 
-	bcpFile.write('%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s' % \
-	    (sequenceKey, TAB, markerTypeKey, TAB, rawBioType, TAB, \
+	bcpFile.write('%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s' % \
+	    (sequenceKey, TAB, TAB, rawBiotype, TAB, \
 		TAB, TAB, CREATEDBY_KEY, TAB, CREATEDBY_KEY, TAB, \
 		cdate, TAB, cdate, CRT) )
 
-    print '\n%s %s MGP gene model Ids in the database but not in the input file' % \
+    print '\n%s %s gene model Ids in the database but not in the input file' % \
 	(notInInputCtr, provider)
 
     print '\n%s %s MGP gene model Ids not loaded because unable to translate biotype\n' % (noTranslationCtr, provider)
