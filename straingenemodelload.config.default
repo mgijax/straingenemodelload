@@ -86,14 +86,20 @@ SGM_BCPFILE=${OUTPUTDIR}/SEQ_GeneModel.mgp.bcp
 
 # full path to the log file
 #
-SGM_LOGFILE=${LOGDIR}/mgp_seqgenemodelload.log
+MCV_LOGFILE=${LOGDIR}/createMCVAnnot.log
 
-export SGM_BCPFILE SGM_LOGFILE
+export SGM_BCPFILE MCV_LOGFILE 
 
 #  The name of the job stream for the load
 JOBSTREAM=straingenemodelload
 
 export JOBSTREAM
+
+# MCV annotation load settings
+MCV_B6_ANNOTLOAD_INPUTFILE=${OUTPUTDIR}/B6McvAnnotations.txt
+MCV_MGP_ANNOTLOAD_INPUTFILE=${OUTPUTDIR}/MGPMcvAnnotations.txt
+
+export MCV_B6_ANNOTLOAD_INPUTFILE MCV_MGP_ANNOTLOAD_INPUTFILE
 
 ###########################################################################
 #
