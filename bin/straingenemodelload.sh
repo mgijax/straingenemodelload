@@ -78,10 +78,10 @@ touch ${LOG}
 # the last time the gene model load was run. If this file exists and is more 
 # recent than the gene model file, the load does not need to be run. 
 #
-#LASTRUN_FILE=${GM_INPUTDIR}/lastrun
+#LASTRUN_FILE=${SGM_INPUTDIR}/lastrun
 #if [ -f ${LASTRUN_FILE} ]
 #then
-#    if test ${LASTRUN_FILE} -nt ${GM_INPUTFILE}
+#    if test ${LASTRUN_FILE} -nt ${SGM_INPUTFILE}
 #    then
 #        echo "Input files have not been updated - skipping load" | tee -a ${LOG}
 #        exit 0
@@ -165,6 +165,20 @@ then
     exit 1
 else
     message="${message} seqgenemodelload.sh B6 successful"
+    echo ${message} | tee -a ${LOG}
+fi
+
+echo "Load MCV Annotations" | tee -a ${LOG}
+echo "${STRAINGENEMODELLOAD}/bin/createMCVAnnots.sh >> ${LOG} 2>&1"
+${STRAINGENEMODELLOAD}/bin/createMCVAnnots.sh >> ${LOG} 2>&1
+STAT=$?
+if [ ${STAT} -ne 0 ]
+then
+    message="${message} createMCVAnnots.sh failed"
+    echo ${message} | tee -a ${LOG}
+    exit 1
+else
+    message="${message} createMCVAnnots.sh successful"
     echo ${message} | tee -a ${LOG}
 fi
 

@@ -4,11 +4,12 @@
 # defaults for MCV annotation load
 #
 
-setenv ANNOTDATADIR	${DATALOADSOUTPUT}/mgi/straingenemodelload/output
+#setenv ANNOTDATADIR	${DATALOADSOUTPUT}/mgi/straingenemodelload/output
+setenv ANNOTDATADIR	${OUTPUTDIR}
 setenv ANNOTMODE	new # deletes then loads
 setenv ANNOTTYPENAME	"MCV/StrainMarker"
 setenv ANNOTINPUTFILE  ${ANNOTDATADIR}/B6McvAnnotations.txt
-setenv ANNOTLOG		${DATALOADSOUTPUT}/mgi/straingenemodelload/logs/B6McvAnnotations.txt.log
+setenv ANNOTLOG		${LOGDIR}/B6McvAnnotations.txt.log
 setenv DELETEREFERENCE  "J:260092" # delete by MGI B6 reference
 setenv DELETEUSER	"none" # don't delete by user
 setenv ANNOTOBSOLETE	0

@@ -88,8 +88,13 @@ then
    exit 1
 fi
 
-#  Call the annotation loader
+# Run the annotload
+# Make sure you cd into the output directory
+# since the annotload puts its output files into
+# the current-working-directory
 #
+cd ${OUTPUTDIR}
+
 echo "" >> ${LOG}
 date >> ${LOG}
 

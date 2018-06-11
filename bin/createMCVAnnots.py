@@ -73,8 +73,8 @@ DATE = ''
 NOTES = ''
 
 # Logical DB
-LDBNAME = 'MGI Strain Gene'
-
+B6_LDBNAME = 'MGI Strain Gene'
+MGP_LDBNAME = 'Mouse Genome Project'
 
 #
 # GLOBALS
@@ -198,7 +198,7 @@ def processB6():
 	    print 'Cannot resolve B6: %s to Feature Type' % rawBiotype
 	    continue
 	mcvID = featureTypeB6Lookup[rawBiotype]
-        fpB6AnnotFile.write('%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s' % (mcvID, TAB, b6ID, TAB, B6_JNUM, TAB, EVIDENCE, TAB, B6_JNUM, TAB, QUALIFIER, TAB, EDITOR, TAB, DATE, TAB, NOTES, TAB, LDBNAME, CRT))
+        fpB6AnnotFile.write('%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s' % (mcvID, TAB, b6ID, TAB, B6_JNUM, TAB, EVIDENCE, TAB, B6_JNUM, TAB, QUALIFIER, TAB, EDITOR, TAB, DATE, TAB, NOTES, TAB, B6_LDBNAME, CRT))
 
     return 0
 
@@ -234,7 +234,7 @@ def processMGP():
             print 'Cannot resolve MGP: %s to Feature Type' % rawBiotype
             continue
         mcvID = featureTypeMGPLookup[rawBiotype]
-        fpMgpAnnotFile.write('%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s' % (mcvID, TAB, mgpID, TAB, MGP_JNUM, TAB, EVIDENCE, TAB, MGP_JNUM, TAB, QUALIFIER, TAB, EDITOR, TAB, DATE, TAB, NOTES, TAB, LDBNAME, CRT))
+        fpMgpAnnotFile.write('%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s' % (mcvID, TAB, mgpID, TAB, MGP_JNUM, TAB, EVIDENCE, TAB, MGP_JNUM, TAB, QUALIFIER, TAB, EDITOR, TAB, DATE, TAB, NOTES, TAB, MGP_LDBNAME, CRT))
 
     return 0
 
