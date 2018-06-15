@@ -42,6 +42,14 @@ INPUTDIR=${FILEDIR}/input
 
 export FILEDIR ARCHIVEDIR LOGDIR RPTDIR OUTPUTDIR INPUTDIR
 
+# For Development only:
+FTPROOT=/export/gondor/ftp
+export FTPROOT
+
+INPUT_MGI_GFF=${FTPROOT}/pub/mgigff3/MGI.gff3.gz
+
+export INPUT_MGI_GFF
+
 # strainmarkerload creates these files for downstream processing
 # we look for a lastrun file in GM_INPUT_DIR and only run the load if
 # lastrun is older than GM_ASSOC_FILE 
@@ -71,35 +79,32 @@ B6_ONLY=false
 
 export B6_ONLY
 
-#
-# seqgenemodel load settings
-#
-
-# MGP Logical DB name 
-MGP_LOGICALDB='Mouse Genome Project'
-
-export MGP_LOGICALDB
-
-# full path to bcp file
-#
-SGM_BCPFILE=${OUTPUTDIR}/SEQ_GeneModel.mgp.bcp
-
-# full path to the log file
-#
-MCV_LOGFILE=${LOGDIR}/createMCVAnnot.log
-
-export SGM_BCPFILE MCV_LOGFILE 
-
 #  The name of the job stream for the load
 JOBSTREAM=straingenemodelload
 
 export JOBSTREAM
 
 # MCV annotation load settings
+
+MCV_LOGFILE=${LOGDIR}/createMCVAnnot.log
+
+export MCV_LOGFILE
+
 MCV_B6_ANNOTLOAD_INPUTFILE=${OUTPUTDIR}/B6McvAnnotations.txt
 MCV_MGP_ANNOTLOAD_INPUTFILE=${OUTPUTDIR}/MGPMcvAnnotations.txt
 
 export MCV_B6_ANNOTLOAD_INPUTFILE MCV_MGP_ANNOTLOAD_INPUTFILE
+
+# SEQ_Source_Assoc update settings
+
+SEQSOURCE_LOGFILE=${LOGDIR}/updateSource.log
+
+export SEQSOURCE_LOGFILE
+
+B6_SEQSOURCE_BCP=${OUTPUTDIR}/SEQ_Source_Assoc.b6.bcp
+MGP_SEQSOURCE_BCP=${OUTPUTDIR}/SEQ_Source_Assoc.mgp.bcp
+
+export B6_SEQSOURCE_BCP MGP_SEQSOURCE_BCP
 
 ###########################################################################
 #
