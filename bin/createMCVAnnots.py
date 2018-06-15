@@ -90,8 +90,7 @@ fpMgpAnnotFile = ''
 #
 # lookups
 #
-featureTypeB6Lookup = {}
-featureTypeMGPLookup = {}
+featureTypeLookup = {}
 
 # Purpose:  Load mcv lookup for B6
 # Returns: nothing
@@ -99,8 +98,8 @@ featureTypeMGPLookup = {}
 # Effects: nothing
 # Throws: nothing
 
-def loadFeatureTypeB6Lookup():
-    global featureTypeB6Lookup
+def loadFeatureTypeLookup():
+    global featureTypeLookup
     results = db.sql('''select t.term, a.accid as mcvID
 	from VOC_Term t, ACC_Accession a
 	where t._Vocab_key = 79 --MCV
@@ -108,30 +107,8 @@ def loadFeatureTypeB6Lookup():
 	and a._MGIType_key = 13
 	and a._LogicalDB_key = 146 --MCV''', 'auto')
     for r in results:
-	featureTypeB6Lookup[r['term']] = r['mcvID']
+	featureTypeLookup[r['term']] = r['mcvID']
 
-    return 0
-
-# Purpose: load rawBiotype Lookup for MGP 
-# Returns: nothing
-# Assumes: there is a connection to the database
-# Effects: nothing
-# Throws: nothing
-
-def loadFeatureTypeMGPLookup():
-    global featureTypeMGPLookup
-
-    # load the MGP biotype translation into a lookup
-    results = db.sql('''select distinct sgm.rawBiotype, a.accid as mcvID
-        from SEQ_GeneModel sgm, VOC_Term t, MRK_BiotypeMapping m, ACC_Accession a
-        where sgm.rawBiotype = t.term
-        and t._Vocab_key = 136 --Biotype MGP
-        and t._Term_key = m._BiotypeTerm_key
-        and m._mcvTerm_key = a._Object_key
-        and a._MGIType_key = 13
-        and a._LogicalDB_key = 146 --MCV''', 'auto')
-    for r in results:
-        featureTypeMGPLookup[r['rawBiotype']] = r['mcvID']
     return 0
 
 # Purpose: init file descriptors, load lookups 
@@ -142,7 +119,6 @@ def loadFeatureTypeMGPLookup():
 
 def init():
     global fpB6AnnotFile, fpMgpAnnotFile
-    global loadFeatureTypeB6Lookup, loadFeatureTypeMGPLookup
 
     try:
         fpB6AnnotFile = open(b6AnnotFile, 'w')
@@ -156,8 +132,7 @@ def init():
         'Could not open file for writing %s\n' % mgpAnnotFile
         sys.exit(1)
 
-    loadFeatureTypeB6Lookup()
-    loadFeatureTypeMGPLookup()
+    loadFeatureTypeLookup()
 
     # Log all SQL
     db.set_sqlLogFunction(db.sqlLogAll)
@@ -165,7 +140,7 @@ def init():
 
     return 0
 
-# Purpose: processes B6 writes to bcp file
+# Purpose: processes B6 writes to annotation load input file
 # Returns: nothing
 # Assumes: nothing
 # Effects: creates file in the filesystem
@@ -182,8 +157,8 @@ def processB6():
 
     db.sql('''create index idx1 on b6Ids(b6ID)''', None)
     
-    results = db.sql('''-- get the raw biotypes for the B6 gene models
-	select b6.b6ID, sgm.rawBiotype
+    results = db.sql('''-- get the biotypes for the B6 gene models
+	select b6.b6ID, sgm.rawBiotype as biotype
 	from b6Ids b6, ACC_Accession a, SEQ_GeneModel sgm
 	where b6.b6ID = a.accid
 	and a._MGIType_key = 19
@@ -193,16 +168,16 @@ def processB6():
     
     for r in results:
 	b6ID = r['b6ID']
-	rawBiotype = r['rawBiotype'] # actually the feature type
-	if rawBiotype not in featureTypeB6Lookup:
-	    print 'Cannot resolve B6: %s to Feature Type' % rawBiotype
+	biotype = r['biotype'] # actually the feature type
+	if biotype not in featureTypeLookup:
+	    print 'Cannot resolve B6: %s to Feature Type' % biotype
 	    continue
-	mcvID = featureTypeB6Lookup[rawBiotype]
+	mcvID = featureTypeLookup[biotype]
         fpB6AnnotFile.write('%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s' % (mcvID, TAB, b6ID, TAB, B6_JNUM, TAB, EVIDENCE, TAB, B6_JNUM, TAB, QUALIFIER, TAB, EDITOR, TAB, DATE, TAB, NOTES, TAB, B6_LDBNAME, CRT))
 
     return 0
 
-# Purpose: processes MGP writes to bcp file
+# Purpose: processes MGP writes to annotation load input file
 # Returns: nothing
 # Assumes: nothing
 # Effects: creates file in the filesystem
@@ -218,8 +193,8 @@ def processMGP():
 	and a.preferred = 1''', None)
     db.sql('''create index idx2 on mgpIds(mgpID)''', None)
 
-    results = db.sql('''-- get the raw biotypes for the MGP gene models
-	select mgp.mgpID, sgm.rawBiotype
+    results = db.sql('''-- get the biotypes for the MGP gene models
+	select mgp.mgpID, sgm.rawBiotype as biotype
 	from mgpIds mgp, ACC_Accession a, SEQ_GeneModel sgm
 	where mgp.mgpID = a.accid
 	and a._MGIType_key = 19
@@ -229,17 +204,17 @@ def processMGP():
     
     for r in results:
         mgpID = r['mgpID']
-        rawBiotype = r['rawBiotype'] 
-        if rawBiotype not in featureTypeMGPLookup:
-            print 'Cannot resolve MGP: %s to Feature Type' % rawBiotype
+        biotype = r['biotype'] # actually the feature type
+        if biotype not in featureTypeLookup:
+            print 'Cannot resolve MGP: %s to Feature Type' % biotype
             continue
-        mcvID = featureTypeMGPLookup[rawBiotype]
+        mcvID = featureTypeLookup[biotype]
         fpMgpAnnotFile.write('%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s' % (mcvID, TAB, mgpID, TAB, MGP_JNUM, TAB, EVIDENCE, TAB, MGP_JNUM, TAB, QUALIFIER, TAB, EDITOR, TAB, DATE, TAB, NOTES, TAB, MGP_LDBNAME, CRT))
 
     return 0
 
 
-# Purpose: creates the bcp file
+# Purpose: creates the annotation load input file
 # Returns: nothing
 # Assumes: nothing
 # Effects: creates file in the filesystem

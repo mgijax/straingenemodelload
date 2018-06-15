@@ -33,8 +33,8 @@
 #      This script will perform following steps:
 #
 #      1) Call the python script (createMCVAnnots.py) input file for
-#	     strain/marker MCV annotations (delete and reload)
-#      2) Call the annotload to load the annotations
+#	     strain/marker MCV annotations (delete and reload) for MGP and/or B6
+#      2) Call the annotload to load the annotations for MGP and/or B6
 #
 #  Notes:  None
 #
