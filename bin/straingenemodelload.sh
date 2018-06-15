@@ -5,8 +5,9 @@
 #
 #  Purpose:
 #
-#      This script is a wrapper around the process that loads the strain gene
-#      models, SEQ_GeneModel and marker associations 
+#      This script is a wrapper around the process that loads the strain genes,
+#      strain gene models, SEQ_GeneModel, updates molecular source and creates MCV
+#	annotations 
 #
 #  Usage:
 #
@@ -18,7 +19,7 @@
 #
 #  Outputs:
 #
-#      - Log file (${LOG_FILE})
+#      - straingenemodelload Log file (${LOG_FILE})
 #
 #  Exit Codes:
 #
@@ -31,9 +32,15 @@
 #
 #      This script will perform following steps:
 #
-#      1) 
-#      2)
-#
+#      1) Check  the lastrun file agains the MGI.gff3 file
+#      2) Run the strainmarkerload to create strain genes for MGP and/or B6
+#      3) Run assemblyseqload to create strain gene models for MGP and/or B6
+#      4) Run seqgenemodelload script to create SEQ_GeneModel records for MGP and/or B6
+#      5) Run updateSource script to delete/reload molecular source for MGP and/or B6
+#      6) Run createMCVAnnots script to create MCV annotations for MGP and/or B6
+#      7) Update the last run file
+#      8) Email the log
+
 #  Notes:  None
 #
 ###########################################################################
@@ -78,24 +85,20 @@ touch ${LOG}
 # the last time the gene model load was run. If this file exists and is more 
 # recent than the gene model file, the load does not need to be run. 
 #
-#LASTRUN_FILE=${SGM_INPUTDIR}/lastrun
-#if [ -f ${LASTRUN_FILE} ]
-#then
-#    if test ${LASTRUN_FILE} -nt ${SGM_INPUTFILE}
-#    then
-#        echo "Input files have not been updated - skipping load" | tee -a ${LOG}
-#        exit 0
-#    fi
-#fi
+LASTRUN_FILE=${SGM_INPUTDIR}/lastrun
+if [ -f ${LASTRUN_FILE} ]
+then
+    if test ${LASTRUN_FILE} -nt ${INPUT_MGI_GFF}
+    then
+        echo "Input files have not been updated - skipping load" | tee -a ${LOG}
+        exit 0
+    fi
+fi
 
+date >> ${LOG}
 message=''
-#
-# If the MGP gene models are to be reloaded, the following is done
-# 1) call the assemblyseqload to reload genemodels and coordinates 
-# 2) call the seqgenemodelload to reload SEQ_GeneModel
-# 
 
-echo "Load Strain Marker objects for B6 and/or MGP. To load only B6 must update strainmarkerload B6_ONLY='true and straingenemodelload B6_ONLY='true'" | tee -a ${LOG}
+echo "Load strain genes" | tee -a ${LOG}
 ${STRAINMARKERLOAD}/bin/strainmarkerload.sh  >> ${LOG} 2>&1
 STAT=$?
 if [ ${STAT} -ne 0 ]
@@ -110,6 +113,7 @@ fi
 
 if [ "${B6_ONLY}" = "false" ]
 then
+    date >> ${LOG}
     echo "Load gene models for MGP" | tee -a ${LOG}
     ${ASSEMBLY_WRAPPER} ${MGP_ASSEMBLY_CONFIG} >> ${LOG} 2>&1
     STAT=$?
@@ -124,6 +128,7 @@ then
     fi
 fi
 
+date >> ${LOG}
 echo "Load gene models for B6" | tee -a ${LOG}
 ${ASSEMBLY_WRAPPER} ${B6_ASSEMBLY_CONFIG} >> ${LOG} 2>&1
 STAT=$?
@@ -139,6 +144,7 @@ fi
 
 if [ "${B6_ONLY}" = "false" ]
 then
+    date >> ${LOG}
     echo "Load SEQ_GeneModel for MGP" | tee -a ${LOG}
     echo "${STRAINGENEMODELLOAD}/bin/seqgenemodelload.sh MGP >> ${LOG} 2>&1"
     ${STRAINGENEMODELLOAD}/bin/seqgenemodelload.sh ${STRAINGENEMODELLOAD}/mgp_seqgenemodel.config >> ${LOG} 2>&1
@@ -154,6 +160,7 @@ then
     fi
 fi
 
+date >> ${LOG}
 echo "Load SEQ_GeneModel for B6" | tee -a ${LOG}
 echo "${STRAINGENEMODELLOAD}/bin/seqgenemodelload.sh B6 >> ${LOG} 2>&1"
 ${STRAINGENEMODELLOAD}/bin/seqgenemodelload.sh ${STRAINGENEMODELLOAD}/b6_seqgenemodel.config >> ${LOG} 2>&1
@@ -168,6 +175,22 @@ else
     echo ${message} | tee -a ${LOG}
 fi
 
+date >> ${LOG}
+echo "Update Molecular Source" | tee -a ${LOG}
+echo "${STRAINGENEMODELLOAD}/bin/updateSource.sh >> ${LOG} 2>&1"
+${STRAINGENEMODELLOAD}/bin/updateSource.sh >> ${LOG} 2>&1
+STAT=$?
+if [ ${STAT} -ne 0 ]
+then
+    message="${message} updateSource.sh failed"
+    echo ${message} | tee -a ${LOG}
+    exit 1
+else
+    message="${message} updateSource.sh successful"
+    echo ${message} | tee -a ${LOG}
+fi
+
+date >> ${LOG}
 echo "Load MCV Annotations" | tee -a ${LOG}
 echo "${STRAINGENEMODELLOAD}/bin/createMCVAnnots.sh >> ${LOG} 2>&1"
 ${STRAINGENEMODELLOAD}/bin/createMCVAnnots.sh >> ${LOG} 2>&1
@@ -182,12 +205,11 @@ else
     echo ${message} | tee -a ${LOG}
 fi
 
-#
-#touch ${LASTRUN_FILE}
+touch ${LASTRUN_FILE}
 
 #
 # mail the log
 #
 cat ${LOG} | mailx -s "Strain Gene Model Load Completed: ${message}" ${MAIL_LOG_PROC}
-
+date >> ${LOG}
 exit 0
