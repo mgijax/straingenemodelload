@@ -108,7 +108,6 @@ then
     exit 1
 else
     message="${message} strainmarkerload.sh successful"
-    echo ${message} | tee -a ${LOG}
 fi
 
 if [ "${B6_ONLY}" = "false" ]
@@ -124,7 +123,6 @@ then
 	exit 1
     else
 	message="${message} assemblyseqload.sh successful"
-	echo ${message} | tee -a ${LOG}
     fi
 fi
 
@@ -139,7 +137,6 @@ then
     exit 1
 else
     message="${message} assemblyseqload.sh successful"
-    echo ${message} | tee -a ${LOG}
 fi
 
 if [ "${B6_ONLY}" = "false" ]
@@ -156,7 +153,6 @@ then
 	exit 1
     else
 	message="${message} seqgenemodelload.sh MGP successful" 
-	echo ${message} | tee -a ${LOG}
     fi
 fi
 
@@ -172,7 +168,6 @@ then
     exit 1
 else
     message="${message} seqgenemodelload.sh B6 successful"
-    echo ${message} | tee -a ${LOG}
 fi
 
 date >> ${LOG}
@@ -187,7 +182,6 @@ then
     exit 1
 else
     message="${message} updateSource.sh successful"
-    echo ${message} | tee -a ${LOG}
 fi
 
 date >> ${LOG}
@@ -202,7 +196,6 @@ then
     exit 1
 else
     message="${message} createMCVAnnots.sh successful"
-    echo ${message} | tee -a ${LOG}
 fi
 
 #touch ${LASTRUN_FILE}
