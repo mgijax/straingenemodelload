@@ -1,4 +1,4 @@
-#!/bin/csh
+#!/bin/csh -x
  
 #
 # Template for SQL report
@@ -31,6 +31,11 @@ and sm._StrainMarker_key = a._Object_key
 and a._MGIType_key = 44 -- MRK_StrainMarker
 and a._LogicalDB_key = 212 -- MGI Strain Gene
 ;
+-- creation date of B6 strain markers
+select distinct to_char(creation_date, 'MM/dd/yyyy') as creation_date
+from MRK_StrainMarker
+where _Refs_key = 282660
+;
 -- count of MGP strain markers with MGP  IDs
 select count(*) from MRK_StrainMarker sm, ACC_Accession a
 where sm._STrain_key != 38048 -- MGP strain markers
@@ -38,40 +43,91 @@ and sm._StrainMarker_key = a._Object_key
 and a._MGIType_key = 44 -- MRK_StrainMarker
 and a._LogicalDB_key = 209 -- MGP
 ;
+-- creation date of MGP strain markers
+select distinct to_char(creation_date, 'MM/dd/yyyy') as creation_date
+from MRK_StrainMarker
+where _Refs_key = 282407
+;
 -- Count of MGP Strain Gene model sequences
 select count(*) from SEQ_Sequence
+where _CreatedBy_key = 1602 --mgp_assemblyseqload
+;
+-- creation date of  MGP Strain Gene model sequences
+select distinct to_char(creation_date, 'MM/dd/yyyy') as creation_date
+from SEQ_Sequence
 where _CreatedBy_key = 1602 --mgp_assemblyseqload
 ;
 -- count of B6 Strain Gene model sequences
 select count(*) from SEQ_Sequence
 where _CreatedBy_key = 1605 --b6_assemblyseqload
 ;
+-- creation date of B6 Strain Gene model sequences
+select distinct to_char(creation_date, 'MM/dd/yyyy') as creation_date
+from SEQ_Sequence
+where _CreatedBy_key = 1605 --b6_assemblyseqload
+;
 -- count of MGP Strain Gene model accession ids
 select count(*) from ACC_Accession
+where _CreatedBy_key = 1602 --mgp_assemblyseqload
+;
+-- creation date of MGP Strain Gene model accession ids
+select distinct to_char(creation_date, 'MM/dd/yyyy') as creation_date
+from ACC_Accession
 where _CreatedBy_key = 1602 --mgp_assemblyseqload
 ;
 -- count of B6 Strain Gene model accession ids
 select count(*) from ACC_Accession
 where _CreatedBy_key = 1605 --b6_assemblyseqload
 ;
--- Count of  MGP Strain Gene Model coordinates
+-- creation date of B6 Strain Gene model accession ids
+select distinct to_char(creation_date, 'MM/dd/yyyy') as creation_date
+from ACC_Accession
+where _CreatedBy_key = 1605 --b6_assemblyseqload
+;
+-- count of  MGP Strain Gene Model coordinates
 select count(*) from MAP_Coord_Feature
 where _CreatedBy_key = 1602 --mgp_assemblyseqload
 ;
--- Count of B6 Strain GEne Model coordinates
+-- creation date of MGP Strain Gene model coordinates
+select distinct to_char(creation_date, 'MM/dd/yyyy') as creation_date
+from MAP_Coord_Feature
+where _CreatedBy_key = 1602 --mgp_assemblyseqload
+;
+-- count of B6 Strain Gene Model coordinates
 select count(*) from MAP_Coord_Feature
+where _CreatedBy_key = 1605 --b6_assemblyseqload
+;
+-- creation date of B6 Strain Gene Model coordinates
+select distinct to_char(creation_date, 'MM/dd/yyyy') as creation_date
+from MAP_Coord_Feature
 where _CreatedBy_key = 1605 --b6_assemblyseqload
 ;
 -- Count of MGP Strain Gene Model sequence IDs
 select count(*) from ACC_Accession
 where _CreatedBy_key = 1602 --mgp_assemblyseqload
 ;
+-- creation date of MGP Strain Gene Model sequence IDs
+select distinct to_char(creation_date, 'MM/dd/yyyy') as creation_date
+from ACC_Accession
+where _CreatedBy_key = 1602 --mgp_assemblyseqload
+;
 -- Count of B6 Strain Gene Model sequence IDs
 select count(*) from ACC_Accession
 where _CreatedBy_key = 1605 --b6_assemblyseqload
 ;
+-- creation date of B6 Strain Gene Model sequence IDs
+select distinct to_char(creation_date, 'MM/dd/yyyy') as creation_date
+from ACC_Accession
+where _CreatedBy_key = 1605 --b6_assemblyseqload
+;
 -- Count of MGP Strain Gene model SEQ_GeneModel rows
 select count(*) from SEQ_Sequence s, SEQ_GeneModel sgm
+where s._CreatedBy_key = 1602 --mgp_assemblyseqload
+and s._Sequence_key = sgm._Sequence_key
+;
+-- creation date of MGP Strain Gene model SEQ_GeneModel
+select distinct to_char(sgm.creation_date, 'MM/dd/yyyy') as creation_date
+from SEQ_Sequence s, SEQ_GeneModel sgm
 where s._CreatedBy_key = 1602 --mgp_assemblyseqload
 and s._Sequence_key = sgm._Sequence_key
 ;
@@ -80,13 +136,29 @@ select count(*) from SEQ_Sequence s, SEQ_GeneModel sgm
 where s._CreatedBy_key = 1605 --b6_assemblyseqload
 and s._Sequence_key = sgm._Sequence_key
 ;
--- count of B6 Strain Gene Model Source --
+-- creation date of B6 Strain Gene model SEQ_GeneModel
+select distinct to_char(sgm.creation_date, 'MM/dd/yyyy') as creation_date
+from SEQ_Sequence s, SEQ_GeneModel sgm
+where s._CreatedBy_key = 1605 --b6_assemblyseqload
+and s._Sequence_key = sgm._Sequence_key
+;
+-- count of B6 Strain Gene Model Source 
 select count(*)
 from SEQ_Source_Assoc
 where _CreatedBy_key = 1605; --b6_assemblyseqload
 ;
--- count of MGP Strain Gene Model Source;
+-- creation date of B6 Strain Gene Model Source 
+select distinct to_char(creation_date, 'MM/dd/yyyy') as creation_date
+from SEQ_Source_Assoc
+where _CreatedBy_key = 1605; --b6_assemblyseqload
+;
+-- count of MGP Strain Gene Model Source
 select count(*)
+from SEQ_Source_Assoc
+where _CreatedBy_key = 1602; --mgp_assemblyseqload
+;
+-- creation date of MGP Strain Gene Model Source
+select distinct to_char(creation_date, 'MM/dd/yyyy') as creation_date
 from SEQ_Source_Assoc
 where _CreatedBy_key = 1602; --mgp_assemblyseqload
 ;
@@ -122,18 +194,15 @@ select s.*, ps.strain
 from strains s, PRB_Strain ps
 where s._Strain_key = ps._Strain_key
 ;
--- date B6 Strain Gene Model Source --
-select distinct creation_date
-from SEQ_Source_Assoc
-where _CreatedBy_key = 1605; --b6_assemblyseqload
-;
--- date of MGP Strain Gene Model Source;
-select distinct creation_date
-from SEQ_Source_Assoc
-where _CreatedBy_key = 1602; --mgp_assemblyseqload
-;
 -- count of MGP MCV/Strain Marker annotations
 select count(*) 
+from VOC_Annot a, VOC_Evidence e
+where a._AnnotType_key = 1025 -- MCV/Strain Marker
+and a._Annot_key = e._Annot_key
+and e._Refs_key = 282407 --J:259852
+;
+-- creation date of MGP MCV/Strain Marker annotations
+select distinct to_char(e.creation_date, 'MM/dd/yyyy') as creation_date
 from VOC_Annot a, VOC_Evidence e
 where a._AnnotType_key = 1025 -- MCV/Strain Marker
 and a._Annot_key = e._Annot_key
@@ -146,10 +215,12 @@ where a._AnnotType_key = 1025 -- MCV/Strain Marker
 and a._Annot_key = e._Annot_key
 and e._Refs_key = 282660 --J:260092
 ;
-
-
-
-
-
+-- creation date of  B6 MCV/Strain Marker annotations
+select distinct to_char(e.creation_date, 'MM/dd/yyyy') as creation_date
+from VOC_Annot a, VOC_Evidence e
+where a._AnnotType_key = 1025 -- MCV/Strain Marker
+and a._Annot_key = e._Annot_key
+and e._Refs_key = 282660 --J:260092
+;
 END
 
