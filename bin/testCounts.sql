@@ -19,7 +19,7 @@ source ${MGICONFIG}/master.config.csh
 
 echo ${PG_DBSERVER}
 echo ${PG_DBNAME}
-psql -h ${PG_DBSERVER} -U ${PG_DBUSER} -d ${PG_DBNAME} -e <<END >> $0.rpt
+psql -h ${PG_DBSERVER} -U ${PG_DBUSER} -d ${PG_DBNAME} -a <<END >> $0.rpt
 -- count of strain markers
 select count(*)
 from MRK_StrainMarker

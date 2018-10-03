@@ -1,3 +1,4 @@
+TAG: straingenemodelload-6-0-13-9
 TAG: straingenemodelload-6-0-13-8
 TAG: straingenemodelload-6-0-13-7
 DATE: 09/27/2018
@@ -6,7 +7,8 @@ CHANGES: TR12734 GF project build tag
 1) straingenemodelload.sh - removed echo of 'message' when successful;
     just sent message to mailx at the end.
 2) added creation_date queries to testCounts.sql
- 
+3) tag -9 load accids when B6_ONLY is true
+
 TAG: straingenemodelload-6-0-13-6
 DATE: 09/12/2018
 STAFF: sc
