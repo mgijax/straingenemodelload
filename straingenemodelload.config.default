@@ -74,8 +74,8 @@ B6_ASSEMBLY_CONFIG=b6_assemblyseqload.config
 
 export ASSEMBLY_WRAPPER MGP_ASSEMBLY_CONFIG B6_ASSEMBLY_CONFIG
 
-B6_ONLY=false
-#B6_ONLY=true
+#B6_ONLY=false
+B6_ONLY=true
 
 export B6_ONLY
 

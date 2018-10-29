@@ -1,3 +1,8 @@
+TAG: straingenemodelload-6-0-13-10
+DATE: 10/29/2018
+STAFF: sc
+CHANGES: reconfig default for production to B6_ONLY=true
+
 TAG: straingenemodelload-6-0-13-9
 TAG: straingenemodelload-6-0-13-8
 TAG: straingenemodelload-6-0-13-7
