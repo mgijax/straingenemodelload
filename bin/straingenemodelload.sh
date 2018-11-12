@@ -198,7 +198,7 @@ else
     message="${message} createMCVAnnots.sh successful"
 fi
 
-#touch ${LASTRUN_FILE}
+touch ${LASTRUN_FILE}
 
 #
 # mail the log

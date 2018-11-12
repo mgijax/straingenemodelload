@@ -1,3 +1,8 @@
+TAG: straingenemodelload-6-0-13-11
+DATE: 11/12/2018
+STAFF: sc
+CHANGES: straingenemodelload.sh - uncommented touch of LASTRUN file
+
 TAG: straingenemodelload-6-0-13-10
 DATE: 10/29/2018
 STAFF: sc
