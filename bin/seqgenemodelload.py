@@ -1,4 +1,3 @@
-#!/usr/local/bin/python
 
 ##########################################################################
 #
@@ -114,10 +113,10 @@ provider =  ldbName
 def loadFeatureTypeLookup():
     global featureTypeLookup
     results = db.sql('''select term 
-	from VOC_Term
-	where _Vocab_key = 79''', 'auto')
+        from VOC_Term
+        where _Vocab_key = 79''', 'auto')
     for r in results:
-	featureTypeLookup.append(r['term'])
+        featureTypeLookup.append(r['term'])
 
     return 0
 
@@ -132,8 +131,8 @@ def loadSequenceKeyLookup():
     global seqKeyByGMIDLookup
 
     results = db.sql('''SELECT _LogicalDB_key
-		FROM ACC_LogicalDB
-		WHERE name = '%s' ''' % ldbName, 'auto')
+                FROM ACC_LogicalDB
+                WHERE name = '%s' ''' % ldbName, 'auto')
     if len(results) == 0:
         print 'LogicalDB name not in database: %s' % ldbName
         sys.exit(1)
@@ -160,8 +159,8 @@ def loadBioTypeByGMIDLookup():
     for line in inFile.readlines():
 
         tokens  =  string.split(line, TAB)
-	mgpId = tokens[0]
-	biotype =  string.strip(tokens[1])
+        mgpId = tokens[0]
+        biotype =  string.strip(tokens[1])
 
         bioTypeByGMIDLookup[mgpId] = biotype
         #print '%s %s %s' % (mgpId, biotype, CRT)
@@ -215,28 +214,28 @@ def run ():
     noTranslationCtr = 0
 
     for id in seqKeyByGMIDLookup:
-	biotype = ''
-	sequenceKey = seqKeyByGMIDLookup[id]
-	if id in bioTypeByGMIDLookup:
-	    biotype = bioTypeByGMIDLookup[id]
-	else:
-	    print '%s is not in the input file' % id
-	    notInInputCtr = notInInputCtr + 1
-	    continue
+        biotype = ''
+        sequenceKey = seqKeyByGMIDLookup[id]
+        if id in bioTypeByGMIDLookup:
+            biotype = bioTypeByGMIDLookup[id]
+        else:
+            print '%s is not in the input file' % id
+            notInInputCtr = notInInputCtr + 1
+            continue
 
-	if biotype not in featureTypeLookup:
-	    print 'GM ID %s biotype "%s" is not in the database' \
-		% (id, biotype)
-	    noTranslationCtr = noTranslationCtr + 1
-	    continue
+        if biotype not in featureTypeLookup:
+            print 'GM ID %s biotype "%s" is not in the database' \
+                % (id, biotype)
+            noTranslationCtr = noTranslationCtr + 1
+            continue
 
-	bcpFile.write('%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s' % \
-	    (sequenceKey, TAB, TAB, biotype, TAB, \
-		TAB, TAB, CREATEDBY_KEY, TAB, CREATEDBY_KEY, TAB, \
-		cdate, TAB, cdate, CRT) )
+        bcpFile.write('%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s' % \
+            (sequenceKey, TAB, TAB, biotype, TAB, \
+                TAB, TAB, CREATEDBY_KEY, TAB, CREATEDBY_KEY, TAB, \
+                cdate, TAB, cdate, CRT) )
 
     print '\n%s %s gene model Ids in the database but not in the input file' % \
-	(notInInputCtr, provider)
+        (notInInputCtr, provider)
 
     print '\n%s %s Gene Model Ids not loaded because unable to translate biotype\n' % (noTranslationCtr, provider)
 
@@ -254,4 +253,3 @@ print 'Creating bcp file'
 run()
 inFile.close()
 bcpFile.close()
-

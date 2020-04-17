@@ -1,4 +1,3 @@
-#!/usr/local/bin/python
 
 ##########################################################################
 #
@@ -96,13 +95,13 @@ sourceLookup = {}
 
 def loadSourceLookup():
     global sourceLookup
-	
+        
     results = db.sql('''select _Strain_key, _Source_key
-	from PRB_Source 
-	where name in ('%s', '%s') ''' % (B6_SOURCE, MGP_SOURCE), 'auto')
+        from PRB_Source 
+        where name in ('%s', '%s') ''' % (B6_SOURCE, MGP_SOURCE), 'auto')
 
     for r in results:
-	sourceLookup[r['_Strain_key']] = r['_Source_key']
+        sourceLookup[r['_Strain_key']] = r['_Source_key']
 
     return 0
 
@@ -122,11 +121,11 @@ def init():
         sys.exit(1)
 
     if B6_ONLY == 'false':
-	try:
-	    fpMgpBcpFile = open(mgpBcpFile, 'w')
-	except:
-	    'Could not open file for writing %s\n' % mgpBcpFile
-	    sys.exit(1)
+        try:
+            fpMgpBcpFile = open(mgpBcpFile, 'w')
+        except:
+            'Could not open file for writing %s\n' % mgpBcpFile
+            sys.exit(1)
 
     loadSourceLookup()
 
@@ -167,27 +166,27 @@ def processB6():
         and a2.preferred = 1''' % (B6_LOGICALDB, B6_LOGICALDB) , 'auto')
 
     for r in results:
-	strainKey = r['_Strain_key']
-	if strainKey not in sourceLookup:
-	    print 'ERROR: _Strain_key: %s does not have named source' % strainKey
-	    continue
+        strainKey = r['_Strain_key']
+        if strainKey not in sourceLookup:
+            print 'ERROR: _Strain_key: %s does not have named source' % strainKey
+            continue
 
-	sourceKey = sourceLookup[r['_Strain_key']]
-	sequenceKey  = r['_Sequence_key']
-	fpB6BcpFile.write('%s%s%s%s%s%s%s%s%s%s%s%s%s%s' % (nextAssocKey, TAB, sequenceKey, TAB, sourceKey, TAB, B6_CREATEDBY_KEY, TAB, B6_CREATEDBY_KEY, TAB, loaddate, TAB, loaddate, CRT ))
-	nextAssocKey += 1
+        sourceKey = sourceLookup[r['_Strain_key']]
+        sequenceKey  = r['_Sequence_key']
+        fpB6BcpFile.write('%s%s%s%s%s%s%s%s%s%s%s%s%s%s' % (nextAssocKey, TAB, sequenceKey, TAB, sourceKey, TAB, B6_CREATEDBY_KEY, TAB, B6_CREATEDBY_KEY, TAB, loaddate, TAB, loaddate, CRT ))
+        nextAssocKey += 1
 
     fpB6BcpFile.close()
    
     # do deletes
     print 'Deleting existing B6 molecular source'
     db.sql('''select _Assoc_key
-	into temporary table b6SourceToDelete
-	from SEQ_Source_Assoc
-	where _CreatedBy_key = %s''' % B6_CREATEDBY_KEY, None)
+        into temporary table b6SourceToDelete
+        from SEQ_Source_Assoc
+        where _CreatedBy_key = %s''' % B6_CREATEDBY_KEY, None)
     db.sql('''delete from SEQ_Source_Assoc sa
-	using b6SourceToDelete b6
-	where sa._Assoc_key = b6._Assoc_key''', None)
+        using b6SourceToDelete b6
+        where sa._Assoc_key = b6._Assoc_key''', None)
     db.commit()
 
     return 0
@@ -221,8 +220,8 @@ def processMGP():
         sourceKey = sourceLookup[r['_Strain_key']]
         sequenceKey  = r['_Sequence_key']
         fpMgpBcpFile.write('%s%s%s%s%s%s%s%s%s%s%s%s%s%s' % (nextAssocKey, TAB, sequenceKey, TAB, sourceKey, TAB, MGP_CREATEDBY_KEY, TAB, MGP_CREATEDBY_KEY, TAB, loaddate, TAB, loaddate, CRT ))
-	
-	nextAssocKey += 1
+        
+        nextAssocKey += 1
 
     fpMgpBcpFile.close()
     
@@ -248,7 +247,7 @@ def processMGP():
 
 def run ():
     if B6_ONLY == 'false':
-	processMGP()
+        processMGP()
 
     processB6()
     
