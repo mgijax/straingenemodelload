@@ -43,8 +43,8 @@ INPUTDIR=${FILEDIR}/input
 export FILEDIR ARCHIVEDIR LOGDIR RPTDIR OUTPUTDIR INPUTDIR
 
 # For Development only:
-FTPROOT=/export/gondor/ftp
-export FTPROOT
+#FTPROOT=/export/gondor/ftp
+#export FTPROOT
 
 INPUT_MGI_GFF=${FTPROOT}/pub/mgigff3/MGI.gff3.gz
 
