@@ -80,7 +80,7 @@ echo 'Creating MCV annotations' >> ${LOG}
 date >> ${LOG}
 
 echo "Creating MCV annotation load input file" | tee -a  ${LOG}
-./createMCVAnnots.py >> ${LOG} 2>&1
+${PYTHON} ./createMCVAnnots.py >> ${LOG} 2>&1
 STAT=$?
 if [ $STAT -ne 0 ]
 then

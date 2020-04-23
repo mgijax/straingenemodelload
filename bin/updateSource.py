@@ -153,7 +153,7 @@ def init():
 def processB6():
     global nextAssocKey
 
-    print 'Processing B6 molecular source'
+    print('Processing B6 molecular source')
     results = db.sql('''select sm._Strain_key, a2._Object_key as _Sequence_key
         from MRK_StrainMarker sm, ACC_Accession a1, ACC_Accession a2
         where sm._StrainMarker_key = a1._Object_key
@@ -168,7 +168,7 @@ def processB6():
     for r in results:
         strainKey = r['_Strain_key']
         if strainKey not in sourceLookup:
-            print 'ERROR: _Strain_key: %s does not have named source' % strainKey
+            print('ERROR: _Strain_key: %s does not have named source' % strainKey)
             continue
 
         sourceKey = sourceLookup[r['_Strain_key']]
@@ -179,7 +179,7 @@ def processB6():
     fpB6BcpFile.close()
    
     # do deletes
-    print 'Deleting existing B6 molecular source'
+    print('Deleting existing B6 molecular source')
     db.sql('''select _Assoc_key
         into temporary table b6SourceToDelete
         from SEQ_Source_Assoc
@@ -199,7 +199,7 @@ def processB6():
 def processMGP():
     global nextAssocKey
 
-    print 'Processing MGP molecular source'
+    print('Processing MGP molecular source')
     results = db.sql('''select sm._Strain_key, a2._Object_key as _Sequence_key
         from MRK_StrainMarker sm, ACC_Accession a1, ACC_Accession a2
         where sm._StrainMarker_key = a1._Object_key
@@ -214,7 +214,7 @@ def processMGP():
     for r in results:
         strainKey = r['_Strain_key']
         if strainKey not in sourceLookup:
-            print 'ERROR: _Strain_key: %s does not have named source' % strainKey
+            print('ERROR: _Strain_key: %s does not have named source' % strainKey)
             continue
 
         sourceKey = sourceLookup[r['_Strain_key']]
@@ -226,7 +226,7 @@ def processMGP():
     fpMgpBcpFile.close()
     
     # do deletes
-    print 'Deleting existing MGP molecular source'
+    print('Deleting existing MGP molecular source')
     db.sql('''select _Assoc_key
         into temporary table mgpSourceToDelete
         from SEQ_Source_Assoc
@@ -256,13 +256,13 @@ def run ():
 # Main
 #
 
-print '%s' % mgi_utils.date()
-print 'Initializing'
+print('%s' % mgi_utils.date())
+print('Initializing')
 init()
 
-print '%s' % mgi_utils.date()
+print('%s' % mgi_utils.date())
 run()
 
 db.useOneConnection(0)
 
-print '%s' % mgi_utils.date()
+print('%s' % mgi_utils.date())

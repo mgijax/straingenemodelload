@@ -109,7 +109,7 @@ then
 fi
 
 echo "Creating bcp file" | tee -a  ${LOG}
-./seqgenemodelload.py #>> ${LOG} 2>&1
+${PYTHON} ./seqgenemodelload.py #>> ${LOG} 2>&1
 STAT=$?
 if [ $STAT -ne 0 ]
 then

@@ -76,7 +76,7 @@ fi
 date >> ${LOG}
 
 echo "Updating SEQ_Source_Assoc" | tee -a  ${LOG}
-./updateSource.py >> ${LOG} 2>&1
+${PYTHON} ./updateSource.py >> ${LOG} 2>&1
 STAT=$?
 if [ $STAT -ne 0 ]
 then

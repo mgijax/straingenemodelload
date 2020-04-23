@@ -134,7 +134,7 @@ def loadSequenceKeyLookup():
                 FROM ACC_LogicalDB
                 WHERE name = '%s' ''' % ldbName, 'auto')
     if len(results) == 0:
-        print 'LogicalDB name not in database: %s' % ldbName
+        print('LogicalDB name not in database: %s' % ldbName)
         sys.exit(1)
     ldbKey = results[0]['_LogicalDB_key']
     results = db.sql('''SELECT accId, _Object_key as seqKey
@@ -158,9 +158,9 @@ def loadBioTypeByGMIDLookup():
 
     for line in inFile.readlines():
 
-        tokens  =  string.split(line, TAB)
+        tokens  =  str.split(line, TAB)
         mgpId = tokens[0]
-        biotype =  string.strip(tokens[1])
+        biotype =  str.strip(tokens[1])
 
         bioTypeByGMIDLookup[mgpId] = biotype
         #print '%s %s %s' % (mgpId, biotype, CRT)
@@ -187,13 +187,13 @@ def init():
         'Could not open file for writing %s\n' % bcpFilePath
         sys.exit(1)
 
-    print 'loading Biotype By GMID Lookup'
+    print('loading Biotype By GMID Lookup')
     loadBioTypeByGMIDLookup()
 
-    print 'loading Sequence Key Lookup'
+    print('loading Sequence Key Lookup')
     loadSequenceKeyLookup()
 
-    print 'loading Feature Type Lookup'
+    print('loading Feature Type Lookup')
     loadFeatureTypeLookup()
 
     return 0
@@ -205,7 +205,7 @@ def init():
 # Throws: nothing
 
 def run ():
-    print 'Creating bcp file for %s ' % provider
+    print('Creating bcp file for %s ' % provider)
     # current count of gm IDs found in database, but not in input
     notInInputCtr = 0
 
@@ -219,13 +219,13 @@ def run ():
         if id in bioTypeByGMIDLookup:
             biotype = bioTypeByGMIDLookup[id]
         else:
-            print '%s is not in the input file' % id
+            print('%s is not in the input file' % id)
             notInInputCtr = notInInputCtr + 1
             continue
 
         if biotype not in featureTypeLookup:
-            print 'GM ID %s biotype "%s" is not in the database' \
-                % (id, biotype)
+            print('GM ID %s biotype "%s" is not in the database' \
+                % (id, biotype))
             noTranslationCtr = noTranslationCtr + 1
             continue
 
@@ -234,22 +234,22 @@ def run ():
                 TAB, TAB, CREATEDBY_KEY, TAB, CREATEDBY_KEY, TAB, \
                 cdate, TAB, cdate, CRT) )
 
-    print '\n%s %s gene model Ids in the database but not in the input file' % \
-        (notInInputCtr, provider)
+    print('\n%s %s gene model Ids in the database but not in the input file' % \
+        (notInInputCtr, provider))
 
-    print '\n%s %s Gene Model Ids not loaded because unable to translate biotype\n' % (noTranslationCtr, provider)
+    print('\n%s %s Gene Model Ids not loaded because unable to translate biotype\n' % (noTranslationCtr, provider))
 
     return 0
 #
 # Main
 #
 
-print '%s' % mgi_utils.date()
-print 'Initializing'
+print('%s' % mgi_utils.date())
+print('Initializing')
 init()
 
-print '%s' % mgi_utils.date()
-print 'Creating bcp file'
+print('%s' % mgi_utils.date())
+print('Creating bcp file')
 run()
 inFile.close()
 bcpFile.close()

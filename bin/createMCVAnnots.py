@@ -145,7 +145,7 @@ def init():
 # Effects: creates file in the filesystem
 # Throws: nothing
 def processB6():
-    print 'Processing B6'
+    print('Processing B6')
     db.sql('''-- get b6 strain/markers and their accids
         select a.accid as b6ID, a._Object_key as _StrainMarker_key
         into temporary table b6Ids
@@ -169,7 +169,7 @@ def processB6():
         b6ID = r['b6ID']
         biotype = r['biotype'] # actually the feature type
         if biotype not in featureTypeLookup:
-            print 'Cannot resolve B6: %s to Feature Type' % biotype
+            print('Cannot resolve B6: %s to Feature Type' % biotype)
             continue
         mcvID = featureTypeLookup[biotype]
         fpB6AnnotFile.write('%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s' % (mcvID, TAB, b6ID, TAB, B6_JNUM, TAB, EVIDENCE, TAB, B6_JNUM, TAB, QUALIFIER, TAB, EDITOR, TAB, DATE, TAB, NOTES, TAB, B6_LDBNAME, CRT))
@@ -182,7 +182,7 @@ def processB6():
 # Effects: creates file in the filesystem
 # Throws: nothing
 def processMGP():
-    print 'Processing MGP'
+    print('Processing MGP')
     db.sql('''-- get mgp strain/markers and their accids
         select a.accid as mgpID, a._Object_key as _StrainMarker_key
         into temporary table mgpIds
@@ -205,7 +205,7 @@ def processMGP():
         mgpID = r['mgpID']
         biotype = r['biotype'] # actually the feature type
         if biotype not in featureTypeLookup:
-            print 'Cannot resolve MGP: %s to Feature Type' % biotype
+            print('Cannot resolve MGP: %s to Feature Type' % biotype)
             continue
         mcvID = featureTypeLookup[biotype]
         fpMgpAnnotFile.write('%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s' % (mcvID, TAB, mgpID, TAB, MGP_JNUM, TAB, EVIDENCE, TAB, MGP_JNUM, TAB, QUALIFIER, TAB, EDITOR, TAB, DATE, TAB, NOTES, TAB, MGP_LDBNAME, CRT))
@@ -230,11 +230,11 @@ def run ():
 # Main
 #
 
-print '%s' % mgi_utils.date()
-print 'Initializing'
+print('%s' % mgi_utils.date())
+print('Initializing')
 init()
 
-print '%s' % mgi_utils.date()
+print('%s' % mgi_utils.date())
 run()
 
 fpB6AnnotFile.close()
@@ -242,4 +242,4 @@ fpMgpAnnotFile.close()
 
 db.useOneConnection(0)
 
-print '%s' % mgi_utils.date()
+print('%s' % mgi_utils.date())
