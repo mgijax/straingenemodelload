@@ -99,6 +99,10 @@ fi
 echo "Adding B6 SEQ_Source_Assoc records" | tee -a ${LOG}
 ${PG_DBUTILS}/bin/bcpin.csh ${MGD_DBSERVER} ${MGD_DBNAME} SEQ_Source_Assoc "" ${B6_SEQSOURCE_BCP} "\t" "\n" mgd >> ${LOG}
 
+echo "Updating SEQ_Source_Assoc autosequence" | tee -a ${LOG}
+${PG_MGD_DBSCHEMADIR}/autosequence/SEQ_Source_Assoc_drop.object >> ${LOG}
+${PG_MGD_DBSCHEMADIR}/autosequence/SEQ_Source_Assoc_create.object >> ${LOG}
+
 date >> ${LOG}
 
 exit 0

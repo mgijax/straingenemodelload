@@ -136,12 +136,8 @@ def init():
     #
     # get next _Assoc_key
     #
-    results = db.sql('''select max(_Assoc_key) + 1 as nextAssocKey
-            from SEQ_Source_Assoc''', 'auto')
-    if results[0]['nextAssocKey'] is None:
-        nextAssocKey = 1000
-    else:
-        nextAssocKey = results[0]['nextAssocKey']
+    results = db.sql(''' select nextval('seq_source_assoc_seq') as nextAssocKey ''', 'auto')
+    nextAssocKey = results[0]['nextAssocKey']
 
     return 0
 
