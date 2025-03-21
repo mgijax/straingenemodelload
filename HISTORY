@@ -1,6 +1,8 @@
+TAG: straigenmodelload-6-0-25-2
 TAG: straigenmodelload-6-0-25-1
 DATE: 03/21/2025
 STAFF: lec
+removed; not necessary
 e4g-127/Process Alliance File to Load SNP_ConsensusSnp_Marker
 remove LASTRUN on SNP server
         modified:   bin/straingenemodelload.sh
